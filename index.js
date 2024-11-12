@@ -1,5 +1,4 @@
-const {PrismaClient} = require ("@prisma/client");
-const prisma = new PrismaClient();
+const prisma = require("./prisma/prismaClient");
 
 const express = require("express");
 
@@ -13,4 +12,4 @@ app.use("/auth", authRoutes);
 
 
 
-app.listen(8000);
+app.listen(3000);
