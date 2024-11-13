@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 class AuthController{
     static async cadastro(req, res){
         const {nome, email, password, tipo} = req.body;
-
+        console.log(req.body)
         if(!nome || nome.length < 6){
             return res.status(422).json({
                 erro: true,
@@ -52,7 +52,7 @@ class AuthController{
                     tipo: "cliente",
                 },
             });
-
+            console.log(usuario)
         return res.status(201).json({
         erro: false,
         mensagem: "Usuário cadastrado com sucesso!",
