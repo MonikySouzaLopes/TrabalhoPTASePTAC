@@ -4,7 +4,9 @@ const router = express.Router();
 
 const ProfileController = require("../controllers/ProfileController");
 
-router.post("/perfil", ProfileController.getPerfil);
-router.post("/atualizaPerfil", ProfileController.atualizaPerfil);
+router.get("/", ProfileController.getPerfil);
+router.patch("/", ProfileController.atualizaPerfil);
+
+
 
 module.exports = router;

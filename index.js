@@ -16,13 +16,6 @@ app.use("/auth", authRoutes);
 const profileRoutes = require("./routes/profileRoutes"); 
 app.use("/perfil", AuthController.verificaAutenticacao, profileRoutes); 
 
-// Rota restrita de exemplo
-app.get("/privado", AuthController.verificaAutenticacao, (req, res) => {
-    res.json({
-        msg: "Você acessou uma rota restrita!"
-    });
-});
-
 // Inicialização do servidor
 app.listen(8000, () => {
     console.log("Servidor rodando na porta 8000");
