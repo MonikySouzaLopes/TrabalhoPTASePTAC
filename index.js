@@ -14,7 +14,11 @@ app.use("/auth", authRoutes);
 
 // Rotas de perfil
 const profileRoutes = require("./routes/profileRoutes"); 
-app.use("/perfil", AuthController.verificaAutenticacao, profileRoutes); 
+app.use("/perfil", AuthController.verificaAutenticacao, profileRoutes);
+
+// Rotas de mesa
+const mesaRoutes = require("./routes/mesaRoutes"); 
+app.use("/mesa", mesaRoutes); 
 
 // Inicialização do servidor
 app.listen(8000, () => {

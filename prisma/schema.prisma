@@ -19,5 +19,28 @@ model Usuario {
   nome String
   email String @unique
   password String @default("")
-  tipo String @default("cliente")
+  tipo String 
+  reservas Reserva[]
+}
+
+model Mesa {
+  id Int @id @default(autoincrement())
+  codigo String
+  n_lugares Int
+  reservas Reserva[]
+}
+
+model Reserva {
+  id Int @id @default(autoincrement())
+  data DateTime
+  n_pessoas Int
+
+  // true: reserva ativa | false: reseva cancelada
+  status Boolean @default(true)
+
+  usuarioId Int
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+
+  mesaId Int
+  mesa Mesa @relation(fields: [mesaId], references: [id])
 }
