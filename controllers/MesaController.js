@@ -1,7 +1,7 @@
 const prisma = require("../prisma/prismaClient");
 
 class MesaController {
-    static async cadastro(req, res) {
+    static async novaMesa(req, res) {
         const { codigo, n_lugares } = req.body;
 
         

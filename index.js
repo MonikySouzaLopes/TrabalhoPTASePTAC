@@ -20,6 +20,10 @@ app.use("/perfil", AuthController.verificaAutenticacao, profileRoutes);
 const mesaRoutes = require("./routes/mesaRoutes"); 
 app.use("/mesa", mesaRoutes); 
 
+// Rotas de reserva
+const reservaRoutes = require("./routes/reservaRoutes"); 
+app.use("/reservas", AuthController.verificaAutenticacao, reservaRoutes)
+
 // Inicialização do servidor
 app.listen(8000, () => {
     console.log("Servidor rodando na porta 8000");
