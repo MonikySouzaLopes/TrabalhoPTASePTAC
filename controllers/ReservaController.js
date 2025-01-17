@@ -77,6 +77,118 @@ class ReservaController {
             });
         }
     }
+    //Função para ver minhas reservas
+    static async minhasReservas(req, res) {
+        try {
+            const reservas = await prisma.reserva.findMany({
+                where: {
+                    usuarioId: req.usuarioId,
+                },
+                include: {
+                    mesa: true,
+                },
+            });
+            return res.status(200).json({
+                erro: false,
+                mensagem: "Reservas encontradas com sucesso.",
+                reservas,
+            });
+        } catch (err) {
+            return res.status(500).json({
+                erro: true,
+                mensagem: "Erro ao buscar as reservas.",
+            });
+        }
+    }
+    //Função para cancelar reserva
+    static async cancelarReserva(req, res) {
+        const { reservaId } = req.body;
+
+        try {
+            const reserva = await prisma.reserva.findUnique({
+                where: { id: parseInt(reservaId) },
+            });
+
+            if (!reserva) {
+                return res.status(401).json({
+                    erro: true,
+                    mensagem: "Reserva não encontrada.",
+                });
+            }
+
+            if (reserva.usuarioId !== req.usuarioId) {
+                return res.status(401).json({
+                    erro: true,
+                    mensagem: "Você não tem permissão para cancelar esta reserva.",
+                });
+            }
+
+            if (new Date(reserva.data) < new Date()) {
+                return res.status(401).json({
+                    erro: true,
+                    mensagem: "Você não pode cancelar reservas de datas anteriores.",
+                });
+            }
+
+            await prisma.reserva.delete({
+                where: { id: parseInt(reservaId) },
+            });
+
+            return res.status(200).json({
+                erro: false,
+                mensagem: "Reserva cancelada com sucesso.",
+            });
+        } catch (err) {
+            console.error(err);
+            return res.status(401).json({
+                erro: true,
+                mensagem: "Erro ao cancelar a reserva.",
+            });
+        }
+    }
+     // Função para "Buscar Todas as Reservas por Data"
+     static async buscarReservasPorData(req, res) {
+        const { data } = req.query;
+
+        if (!data) {
+            return res.status(401).json({
+                erro: true,
+                mensagem: "É necessário informar uma data no formato 'yyyy-mm-dd'.",
+            });
+        }
+
+        try {
+            const reservas = await prisma.reserva.findMany({
+                where: {
+                    data: new Date(data),
+                },
+                include: {
+                    mesa: true,
+                    usuario: {
+                        select: {
+                            id: true,
+                            nome: true,
+                            email: true,
+                        },
+                    },
+                },
+            });
+
+            return res.status(200).json({
+                erro: false,
+                mensagem: "Reservas encontradas com sucesso.",
+                reservas,
+            });
+        } catch (err) {
+            console.error(err);
+            return res.status(401).json({
+                erro: true,
+                mensagem: "Erro ao buscar reservas.",
+            });
+        }
+     }
+
+
 }
 
 module.exports = ReservaController;

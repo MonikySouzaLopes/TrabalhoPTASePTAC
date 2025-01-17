@@ -12,7 +12,7 @@ router.post("/novo",
 
 router.get("/", MesaController.buscarMesas);
 
-router.get("/disponiveis", MesaController.mesasDisp);
+router.get("/disponibilidade", MesaController.mesasDisp);
 
 
 module.exports = router;
