@@ -49,7 +49,7 @@ class AuthController{
                     nome: nome,
                     email: email,
                     password: hashPassword,
-                    tipo: "cliente",
+                    tipo: tipo,
                 },
             });
             console.log(usuario)
@@ -103,6 +103,39 @@ class AuthController{
         })
     }
     
+    static async verificaAutenticacao(req, res, next){
+        const authHeader = req.headers["authorization"];
+
+        const token = authHeader && authHeader.split(" ")[1];
+
+        if (!token) {
+            return res.status(422).json({message: "Token não encontrado."});
+        }
+
+        jwt.verify(token, process.env.SECRET_KEY, (err, payload)=>{
+            if (err){
+                return res.status(401).json({msg: "Token inválido!"})
+            }
+
+            req.usuarioId = payload.id;
+            next();
+        })
+    }
+
+    static async verificaPermissaoAdm (req, res, next){
+        const usuario = await prisma.usuario.findUnique({
+            where : { id: req.usuarioId },
+        });
+
+        if(usuario.tipo === "adm"){
+            next()
+        }else{
+            return res.status(401).json({
+                erro: true,
+                mensagem: "Você não tem permição para acessar esse recurso!"
+            })
+        }
+    }
 }
 
 module.exports = AuthController;
