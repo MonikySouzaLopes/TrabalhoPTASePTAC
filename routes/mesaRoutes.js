@@ -10,7 +10,9 @@ router.post("/novo",
     AuthController.verificaPermissaoAdm, 
     MesaController.novaMesa);
 
-//router.get("/", MesaController.buscarMesas)
+router.get("/", MesaController.buscarMesas);
+
+router.get("/disponiveis", MesaController.mesasDisp);
 
 
 module.exports = router;

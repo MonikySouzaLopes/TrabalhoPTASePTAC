@@ -34,7 +34,6 @@ class MesaController {
         }
 
         try {
-            
             const novaMesa = await prisma.mesa.create({
                 data: {
                     codigo: codigo,
@@ -55,6 +54,58 @@ class MesaController {
             });
         }
     }
+    static async buscarMesas(req, res) {
+        try {
+            const mesas = await prisma.mesa.findMany();
+            return res.status(200).json({
+                erro: false,
+                mensagem: "Mesas recuperadas com sucesso!",
+                mesas,
+            });
+        } catch (error) {
+            return res.status(500).json({
+                erro: true,
+                mensagem: "Erro ao buscar mesas. Tente novamente mais tarde.",
+                detalhe: error.message,
+            });
+        }
+    }
+     static async mesasDisp(req, res) {
+        const { data } = req.query;
+
+        if (!data) {
+            return res.status(422).json({
+                erro: true,
+                mensagem: "É necessário informar uma data no formato 'yyyy-mm-dd'.",
+            });
+        }
+
+        try {
+            const mesas = await prisma.mesa.findMany({
+                include: {
+                    reservas: {
+                        where: {
+                            data: new Date(data),
+                        },
+                    },
+                },
+            });
+
+            return res.status(200).json({
+                erro: false,
+                mensagem: "Consulta realizada com sucesso!",
+                mesas,
+            });
+        } catch (error) {
+            return res.status(500).json({
+                erro: true,
+                mensagem: "Erro ao consultar a disponibilidade de mesas.",
+                detalhe: error.message,
+            });
+        }
+    }
+
+
 }
 
 module.exports = MesaController;

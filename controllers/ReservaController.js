@@ -6,7 +6,7 @@ class ReservaController {
         const data = new Date(req.body.data);
 
         try {
-            // 1. Verificar se a data da reserva é >= hoje
+            // Verificar se a data da reserva é >= hoje
             if (data < new Date()) {
                 return res.status(400).json({
                     erro: true,
@@ -14,7 +14,7 @@ class ReservaController {
                 });
             }
 
-            // 2. Verificar se a mesa existe e se ela está disponível
+            //Verificar se a mesa existe e se ela está disponível
             const mesa = await prisma.mesa.findUnique({
                 where: { id: parseInt(mesaId) }, // Converter mesaId para inteiro
                 include: {
@@ -34,7 +34,7 @@ class ReservaController {
                 });
             }
 
-            // 3. Verificar se a mesa consegue comportar o número de pessoas indicado
+            // Verificar se a mesa consegue comportar o número de pessoas indicado
             if (mesa.n_lugares < n_pessoas) {
                 return res.status(400).json({
                     erro: true,
@@ -42,7 +42,7 @@ class ReservaController {
                 });
             }
 
-            // 4. Verificar se a mesa está livre para a data selecionada
+            //Verificar se a mesa está livre para a data selecionada
             if (mesa.reservas && mesa.reservas.length > 0) {
                 return res.status(400).json({
                     erro: true,
@@ -50,16 +50,16 @@ class ReservaController {
                 });
             }
 
-            // 5. Criar a reserva
+            //Criar a reserva
             await prisma.reserva.create({
                 data: {
                     data: data,
                     n_pessoas: n_pessoas,
                     usuario: {
-                        connect: { id: req.usuarioId }, // Assume que 'usuarioId' vem do middleware de autenticação
+                        connect: { id: req.usuarioId }, 
                     },
                     mesa: {
-                        connect: { id: parseInt(mesaId) }, // Certifique-se de usar um número para o ID da mesa
+                        connect: { id: parseInt(mesaId) }, 
                     },
                 },
             });
