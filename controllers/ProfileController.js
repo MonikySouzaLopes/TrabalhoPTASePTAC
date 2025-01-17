@@ -74,6 +74,32 @@ class ProfileController {
             });
         }
     }
+    // Função para "Buscar Usuários"
+    static async buscarUsuarios(req, res) {
+        try {
+            const usuarios = await prisma.usuario.findMany({
+                select: {
+                    id: true,
+                    nome: true,
+                    email: true,
+                    tipo: true,
+                },
+            });
+
+            return res.status(200).json({
+                erro: false,
+                mensagem: "Usuários encontrados com sucesso.",
+                usuarios,
+            });
+        } catch (error) {
+            return res.status(500).json({
+                erro: true,
+                mensagem: "Erro ao buscar usuários: " + error.message,
+            });
+        }
+    }
+
+    
 }
 
 module.exports = ProfileController;
