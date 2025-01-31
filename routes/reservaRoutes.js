@@ -13,5 +13,7 @@ router.get("/list",
     AuthController.verificaPermissaoAdm, 
     ReservaController.buscarReservasPorData
 );
+router.patch("/", AuthController.verificaAutenticacao, ReservaController.atualizarReserva )
+router.patch("/cancelar", AuthController.verificaAutenticacao, ReservaController.cancelarReserva )
 
 module.exports = router;

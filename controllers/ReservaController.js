@@ -81,12 +81,21 @@ class ReservaController {
     static async minhasReservas(req, res) {
         try {
             const reservas = await prisma.reserva.findMany({
+                orderBy: [
+                    {
+                        status: 'desc'
+                    },
+                    {
+                        data: 'desc'
+                    },
+                    
+                ],
                 where: {
                     usuarioId: req.usuarioId,
                 },
                 include: {
                     mesa: true,
-                },
+                }, 
             });
             return res.status(200).json({
                 erro: false,
@@ -130,8 +139,11 @@ class ReservaController {
                 });
             }
 
-            await prisma.reserva.delete({
+            await prisma.reserva.update({
                 where: { id: parseInt(reservaId) },
+                data: {
+                    status: false,
+                }
             });
 
             return res.status(200).json({
@@ -188,6 +200,56 @@ class ReservaController {
         }
      }
 
+
+ //Função para cancelar reserva
+ static async atualizarReserva(req, res) {
+    const {n_pessoas, reservaId} = req.body
+
+    try {
+        const reserva = await prisma.reserva.findUnique({
+            where: { id: parseInt(reservaId) },
+        });
+
+        if (!reserva) {
+            return res.status(401).json({
+                erro: true,
+                mensagem: "Reserva não encontrada.",
+            });
+        }
+
+        if (reserva.usuarioId !== req.usuarioId) {
+            return res.status(401).json({
+                erro: true,
+                mensagem: "Você não tem permissão para cancelar esta reserva.",
+            });
+        }
+
+        if (new Date(reserva.data) < new Date()) {
+            return res.status(401).json({
+                erro: true,
+                mensagem: "Você não pode cancelar reservas de datas anteriores.",
+            });
+        }
+
+        await prisma.reserva.update({
+            where: { id: parseInt(reservaId) },
+            data: {
+                n_pessoas: parseInt(n_pessoas),
+            }
+        });
+
+        return res.status(200).json({
+            erro: false,
+            mensagem: "Reserva cancelada com sucesso.",
+        });
+    } catch (err) {
+        console.error(err);
+        return res.status(401).json({
+            erro: true,
+            mensagem: "Erro ao cancelar a reserva.",
+        });
+    }
+}
 
 }
 
